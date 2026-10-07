@@ -66,6 +66,7 @@ body {
   font-size: 0.95em;
   cursor: pointer;
   color: #334155;
+  transition: all 0.2s ease;
 }
 .tab-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
 
@@ -163,7 +164,7 @@ body {
   border-radius: 6px;
   cursor: pointer;
 }
-.ctrl-btn:disabled { background: #94a3b8; }
+.ctrl-btn:disabled { background: #94a3b8; cursor: not-allowed; }
 
 .resource-card {
   background: #f8fafc;
@@ -177,29 +178,136 @@ body {
   align-items: center;
 }
 
-.form-group {
-  margin-bottom: 22px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid #e2e8f0;
+/* IMPROVED CHECKPOINT FORM STYLES */
+.student-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--primary);
+  background: #f1f5f9;
+  padding: 16px;
+  border-radius: 8px;
 }
-label { font-weight: bold; margin-bottom: 6px; display: block; }
-input, textarea, select {
-  width: 100%;
-  padding: 10px;
+
+.student-meta-item label {
+  font-size: 0.8em;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.question-label {
+  font-size: 1.05em;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.4;
+}
+
+.q-number {
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 0.85em;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.options-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.option-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
   border: 1px solid var(--border);
   border-radius: 6px;
+  background: #f8fafc;
+  cursor: pointer;
+  font-weight: normal;
+  font-size: 0.95em;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.option-label:hover {
+  background: #f0fdf4;
+  border-color: var(--primary);
+}
+
+.option-label input[type="radio"],
+.option-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+  margin: 0;
+  cursor: pointer;
+}
+
+input[type="text"], 
+input[type="date"], 
+textarea, 
+select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.95em;
+  box-sizing: border-box;
+  background-color: #f8fafc;
+  color: var(--text-dark);
+  font-family: inherit;
+}
+
+input[type="text"]:focus, 
+input[type="date"]:focus, 
+textarea:focus, 
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
 }
 
 .submit-btn {
   width: 100%;
   background: var(--primary);
   color: white;
-  padding: 14px;
-  font-size: 1.05em;
+  padding: 16px;
+  font-size: 1.1em;
   font-weight: bold;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.2s ease;
+}
+
+.submit-btn:hover {
+  background: var(--primary-dark);
 }
 
 .tab-content { display: none; }
@@ -209,6 +317,13 @@ input, textarea, select {
 .italic { font-style: italic; }
 .subtitle { color: var(--text-muted); }
 
+@media print {
+  body { background: white; padding: 0; }
+  .container { max-width: 100%; }
+  .nav-tabs, .bellringer-box, .deck-controls, .submit-btn, .header-card { display: none !important; }
+  .card { box-shadow: none; border: none; padding: 0; }
+  .form-group { page-break-inside: avoid; border: 1px solid #cbd5e1; }
+}
 </style>
 </head>
 <body>
@@ -257,7 +372,7 @@ input, textarea, select {
     </div>
 
     <div id="slide-stage" class="slide-stage">
-      <!-- Slides injected by script.js -->
+      <!-- Slides injected by script -->
     </div>
 
     <div class="deck-controls">
@@ -271,16 +386,17 @@ input, textarea, select {
     <h3>Lesson Resource & Reference Hub</h3>
     <p class="muted">Access official course references below.</p>
     <div id="resource-list">
-      <!-- Resources injected by script.js -->
+      <!-- Resources injected by script -->
     </div>
   </div>
 
   <!-- TAB: STUDENT WORK CHECKPOINT -->
   <div id="form-tab" class="card tab-content">
     <h3>Student Work Checkpoint & Reflection</h3>
+    <p class="muted">Complete all interactive assessment questions below and submit your work.</p>
     <form id="checkpoint-form" onsubmit="event.preventDefault(); window.print();">
-      <!-- Dynamic form fields injected by script.js -->
-      <button type="submit" class="submit-btn">Print this page and turn into the Red Basket!</button>
+      <!-- Dynamic form fields injected by script -->
+      <button type="submit" class="submit-btn">Print Checkpoint & Turn into Red Basket!</button>
     </form>
   </div>
 
@@ -293,15 +409,14 @@ let bellringers = [];
 
 // Stock image pool for default visual slides
 const stockImagePool = [
-  'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=300&q=80', // Turtle / Nature
-  'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=80', // Water / Earth-Diver
-  'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=300&q=80', // Ecology / Forest
-  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=300&q=80', // Campfire / Orality
-  'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=300&q=80', // Literature / History
-  'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=300&q=80'  // Writing Workshop
+  'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=300&q=80'
 ];
 
-// Emoji fallback pool
 const iconPool = ['🐢', '🌊', '🌱', '🗣️', '☯️', '📝'];
 
 function renderSlides(slides) {
@@ -313,9 +428,7 @@ function renderSlides(slides) {
     wrapper.className = 'slide' + (index === 0 ? ' active' : '');
     wrapper.id = `slide-${index + 1}`;
 
-    // Priority 1: slide.image OR Stock Web Image
     const imageUrl = slide.image || stockImagePool[index % stockImagePool.length];
-    // Fallback: slide.icon OR Emoji Pool
     const fallbackEmoji = slide.icon || iconPool[index % iconPool.length];
 
     const visualMediaHTML = `
@@ -347,6 +460,7 @@ function renderSlides(slides) {
     stage.appendChild(wrapper);
   });
 }
+
 function initLesson(data) {
   bellringers = data.bellringers || [];
   totalSlides = (data.slides || []).length || 1;
@@ -388,19 +502,10 @@ function renderResources(resources) {
   if (Array.isArray(resources)) {
     resourceList = resources;
   } else if (resources && typeof resources === 'object') {
-    if (Array.isArray(resources.buttons)) {
-      resourceList = resources.buttons;
-    } else if (Array.isArray(resources.files)) {
-      resourceList = resources.files;
-    } else if (Array.isArray(resources.items)) {
-      resourceList = resources.items;
-    } else if (resources.file || resources.link || resources.url) {
-      resourceList = [resources];
-    }
-  }
-
-  if (!resourceList.length && resources && typeof resources === 'object' && resources.title && (resources.file || resources.link || resources.url)) {
-    resourceList = [resources];
+    if (Array.isArray(resources.buttons)) resourceList = resources.buttons;
+    else if (Array.isArray(resources.files)) resourceList = resources.files;
+    else if (Array.isArray(resources.items)) resourceList = resources.items;
+    else if (resources.file || resources.link || resources.url) resourceList = [resources];
   }
 
   resourceList.forEach(res => {
@@ -408,17 +513,12 @@ function renderResources(resources) {
     card.className = 'resource-card';
 
     if (typeof res === 'string') {
-      const cleanText = res.trim();
-      const isFile = /\.(pdf|docx?|pptx?|xlsx?)$/i.test(cleanText);
-      if (!isFile) return;
-
-      const label = cleanText.split('/').pop();
       card.innerHTML = `
         <div>
-          <strong>${label}</strong><br/>
-          <small>Repository file</small>
+          <strong>${res}</strong><br/>
+          <small>Course Reference & Literature</small>
         </div>
-        <a href="${cleanText}" target="_blank" rel="noopener noreferrer" class="ctrl-btn">Open Resource</a>
+        <button type="button" class="ctrl-btn" onclick="alert('Opening resource: ${res}')">View Reference</button>
       `;
       container.appendChild(card);
       return;
@@ -427,14 +527,13 @@ function renderResources(resources) {
     const resourceUrl = res.file || res.link || res.url || res.href || '#';
     const resourceTitle = res.title || res.name || res.label || 'Resource Item';
     const resourceDescription = res.description || res.summary || '';
-    const fileName = resourceUrl && typeof resourceUrl === 'string' ? resourceUrl.split('/').pop() : '';
 
     card.innerHTML = `
       <div>
-        <strong>${resourceTitle || fileName || 'Resource Item'}</strong><br/>
+        <strong>${resourceTitle}</strong><br/>
         <small>${resourceDescription}</small>
       </div>
-      ${resourceUrl && resourceUrl !== '#' ? `<a href="${resourceUrl}" target="_blank" rel="noopener noreferrer" class="ctrl-btn">Open Resource</a>` : ''}
+      <a href="${resourceUrl}" target="_blank" rel="noopener noreferrer" class="ctrl-btn">Open Resource</a>
     `;
     container.appendChild(card);
   });
@@ -445,40 +544,82 @@ function renderForm(fields) {
   const submitBtn = form.querySelector('.submit-btn');
   form.innerHTML = '';
 
+  // 1. Student Meta Header
+  const metaContainer = document.createElement('div');
+  metaContainer.className = 'student-meta-grid';
+  metaContainer.innerHTML = `
+    <div class="student-meta-item">
+      <label for="student_name">Student Name</label>
+      <input type="text" id="student_name" placeholder="First & Last Name" required />
+    </div>
+    <div class="student-meta-item">
+      <label for="student_date">Date</label>
+      <input type="date" id="student_date" required />
+    </div>
+    <div class="student-meta-item">
+      <label for="student_period">Class Period</label>
+      <input type="text" id="student_period" placeholder="e.g. Period 2" required />
+    </div>
+  `;
+  form.appendChild(metaContainer);
+
   const fieldList = Array.isArray(fields) ? fields : [];
 
-  fieldList.forEach(field => {
+  // 2. Render Questions
+  fieldList.forEach((field, index) => {
     const group = document.createElement('div');
     group.className = 'form-group';
 
-    const label = field.label || field.prompt || `Question ${field.field_id || ''}`.trim() || 'Question';
-    const id = `field_${(field.field_id || label).toString().replace(/\s+/g, '_').toLowerCase()}`;
+    const qNum = index + 1;
+    // Extract actual question string from JSON key variations
+    const questionText = field.question || field.label || field.prompt || `Question ${field.id || qNum}`;
+    const fieldId = `q_${field.id || qNum}`;
 
     let inputHTML = '';
-    if (field.type === 'short_answer' || field.type === 'short_text' || field.type === 'text') {
-      inputHTML = `<input type="text" id="${id}" ${field.required ? 'required' : ''} />`;
-    } else if (field.type === 'date') {
-      inputHTML = `<input type="date" id="${id}" ${field.required ? 'required' : ''} />`;
-    } else if (field.type === 'long_text' || field.type === 'quote_citation' || field.type === 'reflection') {
-      inputHTML = `<textarea id="${id}" rows="5" ${field.required ? 'required' : ''}></textarea>`;
-    } else if (field.type === 'multiple_choice' || field.type === 'true_false') {
+
+    if (field.type === 'multiple_choice' || field.type === 'true_false') {
       const options = field.type === 'true_false' ? ['True', 'False'] : (field.options || []);
-      inputHTML = options.map((option, index) => `<label><input type="radio" id="${id}_${index}" name="${id}" value="${option}" ${field.required ? 'required' : ''} /> ${option}</label>`).join('<br/>');
-    } else if (field.type === 'checkbox') {
-      inputHTML = (field.options || []).map((option, index) => `<label><input type="checkbox" id="${id}_${index}" name="${id}" value="${option}" /> ${option}</label>`).join('<br/>');
-    } else if (field.type === 'rating_scale') {
-      inputHTML = `<select id="${id}">${(field.options || []).map(o => `<option>${o}</option>`).join('')}</select>`;
-    } else if (field.type === 'select_rubric') {
-      inputHTML = `<select id="${id}"><option>-- Select Rubric Benchmark Level --</option>${(field.options || []).map(o => `<option>${o}</option>`).join('')}</select>`;
-    } else if (field.type === 'checkbox_group' || field.type === 'multi_select') {
-      inputHTML = (field.options || []).map(o => `<label><input type="checkbox" name="${id}" value="${o}" /> ${o}</label>`).join('<br/>');
+      inputHTML = `<div class="options-group">` + 
+        options.map((opt, i) => `
+          <label class="option-label">
+            <input type="radio" id="${fieldId}_${i}" name="${fieldId}" value="${opt}" ${field.required ? 'required' : ''} />
+            <span>${opt}</span>
+          </label>
+        `).join('') + 
+      `</div>`;
+    } else if (field.type === 'fill_in_blank' || field.type === 'fill_in_the_blank') {
+      inputHTML = `<input type="text" id="${fieldId}" name="${fieldId}" placeholder="Type missing word or phrase..." ${field.required ? 'required' : ''} />`;
+    } else if (field.type === 'short_answer' || field.type === 'short_text' || field.type === 'text') {
+      inputHTML = `<input type="text" id="${fieldId}" name="${fieldId}" placeholder="Type your answer here..." ${field.required ? 'required' : ''} />`;
+    } else if (field.type === 'long_text' || field.type === 'reflection' || field.type === 'quote_citation') {
+      inputHTML = `<textarea id="${fieldId}" name="${fieldId}" rows="4" placeholder="Write your detailed explanation or reflection here..." ${field.required ? 'required' : ''}></textarea>`;
+    } else if (field.type === 'rating_scale' || field.type === 'select_rubric') {
+      const options = field.options || ['1 - Beginning', '2 - Developing', '3 - Proficient', '4 - Exemplary'];
+      inputHTML = `
+        <select id="${fieldId}" name="${fieldId}">
+          <option value="">-- Select Benchmark Rating --</option>
+          ${options.map(o => `<option value="${o}">${o}</option>`).join('')}
+        </select>
+      `;
+    } else {
+      inputHTML = `<input type="text" id="${fieldId}" name="${fieldId}" placeholder="Your response..." />`;
     }
 
-    group.innerHTML = `<label for="${id}">${label}</label>${inputHTML}`;
+    group.innerHTML = `
+      <label class="question-label" for="${fieldId}">
+        <span class="q-number">Q${qNum}</span>
+        <span>${questionText}</span>
+      </label>
+      ${inputHTML}
+    `;
     form.appendChild(group);
   });
 
   if (submitBtn) form.appendChild(submitBtn);
+
+  // Set default today's date
+  const dateInput = document.getElementById('student_date');
+  if (dateInput) dateInput.valueAsDate = new Date();
 }
 
 function switchTab(key) {
@@ -496,7 +637,111 @@ function switchTab(key) {
     document.getElementById('form-tab').classList.add('active');
   }
 }
-window.addEventListener('DOMContentLoaded', () => initLesson({"day": 26, "date": "October 7", "subject": "Basic Broadcast Technology: A CTE Pathway Course", "unit": "Unit 6: Basic Editing Concepts", "topic": "Editing Pacing: The Rhythm of News", "primary_focus": "Analyzing how edit length affects viewer engagement and story urgency.", "core_objectives": "Edit a high-energy 15-second teaser clip for social media distribution.", "weekly_standards_focus": ["CTB.12.03 (Editing Principles, Continuity, & Emphasis)", "CTB.01.03 (NLE Technical Terminology)"], "bellringers": ["How does shot duration influence psychological perception of speed and urgency in video?", "Define 'cutting on action' and explain its impact on edit seamlessness.", "What key attributes differentiate broadcast TV news pacing from social media promotional teasers?", "How do audio beat markers guide visual edit placement during fast-paced news promo production?"], "slides": [{"title": "Psychology of Editing Pacing", "standard": "CTB.12.03", "bullets": ["Pacing refers to the rate and pattern of cuts within a sequence over time.", "Shorter clip durations accelerate emotional tension and convey heightened situational urgency.", "Longer clip durations encourage viewer contemplation, emphasis, and detail retention."], "callout": "Edit pacing directly manipulates audience heart rate, attention retention, and emotional engagement."}, {"title": "Broadcast News vs. Digital Teaser Pacing", "standard": "CTB.12.03", "bullets": ["Traditional broadcast packages average 3 to 5 seconds per individual shot.", "Social media teaser promos average 0.5 to 1.5 seconds per cut to hold viewer focus.", "Adapting broadcast content for quick-attention markets requires aggressive shot density."], "callout": "Modern audience retention metrics demand rapid visual hook delivery within initial seconds."}, {"title": "Cutting on Action", "standard": "CTB.12.03", "bullets": ["Hide edit cuts by transitioning during an ongoing physical motion or camera movement.", "Match action across two focal lengths to preserve viewer directional orientation.", "Avoid cutting during static frames when attempting to maintain high sequence energy."], "callout": "Action cuts camouflage transition boundaries by directing eye movement along continuous kinetic paths."}, {"title": "Rhythmic Editing and Audio Beats", "standard": "CTB.12.03", "bullets": ["Utilize background music transients and sound effect hits as edit anchor points.", "Set timeline markers on musical beats to synchronize rapid visual cut points.", "Vary cut lengths off-beat periodically to avoid predictable or robotic sequence rhythms."], "callout": "Aligning visual cuts with audio transients establishes compelling rhythmic drive."}, {"title": "Structuring the 15-Second Teaser Clip", "standard": "CTB.12.03", "bullets": ["Hook: Capture attention within 0 to 2 seconds using a high-impact visual or audio bite.", "Core Message: Deliver essential story context across 3 to 11 seconds with fast cuts.", "Call to Action (CTA): Conclude with broadcast tuning instructions or station branding across 12 to 15 seconds."], "callout": "Every frame in a 15-second teaser must justify its inclusion in the total time budget."}, {"title": "Optimizing Aspect Ratios for Social Feeds", "standard": "CTB.01.03", "bullets": ["Frame sequences for vertical (9:16) or square (1:1) viewports depending on target platform.", "Utilize reframing tools to keep focal subjects centered within mobile safe zones.", "Ensure graphic overlays remain clear on small digital screens."], "callout": "Multi-platform distribution requires tailoring aspect ratios and graphic placement to viewing device formats."}, {"title": "Sound Design for High-Energy Promos", "standard": "CTB.12.03", "bullets": ["Layer risers, swooshes, and impact sound effects (SFX) to accentuate cut points.", "Duck background audio tracks under quick voiceover callouts using sidechain compression.", "Ensure punchy audio transients drive visual cut transitions."], "callout": "Dynamic sound design amplifies visual pacing and elevates social media clip retention."}, {"title": "On-Screen Typography & Dynamic Text", "standard": "CTB.01.03", "bullets": ["Use high-contrast, bold kinetic typography to convey key narrative words.", "Position text elements within title-safe regions to avoid feed UI clutter.", "Animate text entries with keyframes to match rapid clip transition speeds."], "callout": "On-screen captions ensure message retention for silent autoplay mobile viewers."}, {"title": "Analyzing Attention Economy Research", "standard": "CTB.12.03", "bullets": ["Examine data from 'Shorter Attention Spans Enable Quick Attention Markets'.", "Evaluate how micro-content engagement impacts traditional broadcast viewership funneling.", "Design editing workflows tailored to captivate low-attention-span digital demographics."], "callout": "Understanding audience attention metrics informs strategic pacing decisions in digital news distribution."}, {"title": "Trimming Precision: Sub-Frame & Match Edits", "standard": "CTB.01.03", "bullets": ["Utilize sub-frame audio editing to eliminate micro-gaps in fast dialogue chops.", "Perform match cuts connecting similar shapes or motions between consecutive clips.", "Audit sequence frame count to guarantee exact 15:00 social media export length."], "callout": "Sub-frame precision prevents audio pops and preserves seamless continuity during high-frequency edits."}, {"title": "Export Presets for Social Distribution", "standard": "CTB.01.03", "bullets": ["Select H.264/MP4 container formats with target bitrates optimized for mobile web delivery.", "Verify stereo audio encoding at 320 kbps / 48 kHz standard AAC bitrate.", "Incorporate strict color profile metadata tagging (sRGB / Rec.709) for consistent mobile display."], "callout": "Correct render settings preserve visual punch and prevent platform compression artifacts."}, {"title": "Pacing Peer Audit & Critique", "standard": "CTB.12.03", "bullets": ["Analyze peer 15-second teasers for shot density, cut rhythm, and hook effectiveness.", "Identify moments of visual lagging or audio misalignment that disrupt pace.", "Iterate cuts to maximize emotional impact and viewer retention."], "callout": "Objective peer evaluation pinpoints exact frames where visual pacing lags or loses momentum."}], "resources": ["Shorter Attention Spans Enable Quick Attention Markets"], "form": [{"id": 1, "type": "multiple_choice", "question": "What effect does reducing average shot length (ASL) have on video pacing?", "options": ["Slows down narrative momentum", "Increases perceived speed and urgency", "Eliminates need for audio mixing", "Lowers render frame rates"], "correct_answer": "Increases perceived speed and urgency"}, {"id": 2, "type": "multiple_choice", "question": "What editing technique hides a transition point by cutting during subject movement?", "options": ["Cutting on action", "Jump cutting", "Match fade", "Freeze frame"], "correct_answer": "Cutting on action"}, {"id": 3, "type": "multiple_choice", "question": "What is the primary target duration for the high-energy social media teaser objective?", "options": ["5 seconds", "15 seconds", "60 seconds", "3 minutes"], "correct_answer": "15 seconds"}, {"id": 4, "type": "short_answer", "question": "Why is dynamic kinetic typography essential for social media news teasers?", "correct_answer": "It captures attention and communicates key news facts for mobile users viewing video with audio muted."}, {"id": 5, "type": "short_answer", "question": "Describe the three-part structural breakdown of an effective 15-second news promo teaser.", "correct_answer": "Hook (0-2s to grab attention), Core Message (3-11s fast-paced content delivery), Call to Action/Branding (12-15s tune-in info)."}, {"id": 6, "type": "true_false", "question": "Traditional broadcast television packages use faster pacing and shorter shot durations than social media teasers.", "correct_answer": "False"}, {"id": 7, "type": "true_false", "question": "Setting timeline markers on audio musical beats helps editors synchronize visual cut points to music rhythm.", "correct_answer": "True"}, {"id": 8, "type": "multiple_choice", "question": "Which aspect ratio is standard for vertical mobile social media video platforms?", "options": ["16:9", "4:3", "9:16", "21:9"], "correct_answer": "9:16"}, {"id": 9, "type": "fill_in_blank", "question": "The editing principle that connects similar shapes or motions between two consecutive clips is called a ________ cut.", "correct_answer": "match"}, {"id": 10, "type": "short_answer", "question": "How does the research resource 'Shorter Attention Spans Enable Quick Attention Markets' justify rapid news editing?", "correct_answer": "It demonstrates that digital viewers lose interest quickly, necessitating immediate visual hooks and condensed messaging."}]}));
+
+// Initialize Lesson Data with Diversified Checkpoint Questions
+window.addEventListener('DOMContentLoaded', () => initLesson({
+  "day": 26, 
+  "date": "October 7", 
+  "subject": "Basic Broadcast Technology: A CTE Pathway Course", 
+  "unit": "Unit 6: Basic Editing Concepts", 
+  "topic": "Editing Pacing: The Rhythm of News", 
+  "primary_focus": "Analyzing how edit length affects viewer engagement and story urgency.", 
+  "core_objectives": "Edit a high-energy 15-second teaser clip for social media distribution.", 
+  "weekly_standards_focus": ["CTB.12.03 (Editing Principles, Continuity, & Emphasis)", "CTB.01.03 (NLE Technical Terminology)"], 
+  "bellringers": [
+    "How does shot duration influence psychological perception of speed and urgency in video?", 
+    "Define 'cutting on action' and explain its impact on edit seamlessness.", 
+    "What key attributes differentiate broadcast TV news pacing from social media promotional teasers?", 
+    "How do audio beat markers guide visual edit placement during fast-paced news promo production?"
+  ], 
+  "slides": [
+    {"title": "Psychology of Editing Pacing", "standard": "CTB.12.03", "bullets": ["Pacing refers to the rate and pattern of cuts within a sequence over time.", "Shorter clip durations accelerate emotional tension and convey heightened situational urgency.", "Longer clip durations encourage viewer contemplation, emphasis, and detail retention."], "callout": "Edit pacing directly manipulates audience heart rate, attention retention, and emotional engagement."}, 
+    {"title": "Broadcast News vs. Digital Teaser Pacing", "standard": "CTB.12.03", "bullets": ["Traditional broadcast packages average 3 to 5 seconds per individual shot.", "Social media teaser promos average 0.5 to 1.5 seconds per cut to hold viewer focus.", "Adapting broadcast content for quick-attention markets requires aggressive shot density."], "callout": "Modern audience retention metrics demand rapid visual hook delivery within initial seconds."}, 
+    {"title": "Cutting on Action", "standard": "CTB.12.03", "bullets": ["Hide edit cuts by transitioning during an ongoing physical motion or camera movement.", "Match action across two focal lengths to preserve viewer directional orientation.", "Avoid cutting during static frames when attempting to maintain high sequence energy."], "callout": "Action cuts camouflage transition boundaries by directing eye movement along continuous kinetic paths."}, 
+    {"title": "Rhythmic Editing and Audio Beats", "standard": "CTB.12.03", "bullets": ["Utilize background music transients and sound effect hits as edit anchor points.", "Set timeline markers on musical beats to synchronize rapid visual cut points.", "Vary cut lengths off-beat periodically to avoid predictable or robotic sequence rhythms."], "callout": "Aligning visual cuts with audio transients establishes compelling rhythmic drive."}, 
+    {"title": "Structuring the 15-Second Teaser Clip", "standard": "CTB.12.03", "bullets": ["Hook: Capture attention within 0 to 2 seconds using a high-impact visual or audio bite.", "Core Message: Deliver essential story context across 3 to 11 seconds with fast cuts.", "Call to Action (CTA): Conclude with broadcast tuning instructions or station branding across 12 to 15 seconds."], "callout": "Every frame in a 15-second teaser must justify its inclusion in the total time budget."}, 
+    {"title": "Optimizing Aspect Ratios for Social Feeds", "standard": "CTB.01.03", "bullets": ["Frame sequences for vertical (9:16) or square (1:1) viewports depending on target platform.", "Utilize reframing tools to keep focal subjects centered within mobile safe zones.", "Ensure graphic overlays remain clear on small digital screens."], "callout": "Multi-platform distribution requires tailoring aspect ratios and graphic placement to viewing device formats."}, 
+    {"title": "Sound Design for High-Energy Promos", "standard": "CTB.12.03", "bullets": ["Layer risers, swooshes, and impact sound effects (SFX) to accentuate cut points.", "Duck background audio tracks under quick voiceover callouts using sidechain compression.", "Ensure punchy audio transients drive visual cut transitions."], "callout": "Dynamic sound design amplifies visual pacing and elevates social media clip retention."}, 
+    {"title": "On-Screen Typography & Dynamic Text", "standard": "CTB.01.03", "bullets": ["Use high-contrast, bold kinetic typography to convey key narrative words.", "Position text elements within title-safe regions to avoid feed UI clutter.", "Animate text entries with keyframes to match rapid clip transition speeds."], "callout": "On-screen captions ensure message retention for silent autoplay mobile viewers."}, 
+    {"title": "Analyzing Attention Economy Research", "standard": "CTB.12.03", "bullets": ["Examine data from 'Shorter Attention Spans Enable Quick Attention Markets'.", "Evaluate how micro-content engagement impacts traditional broadcast viewership funneling.", "Design editing workflows tailored to captivate low-attention-span digital demographics."], "callout": "Understanding audience attention metrics informs strategic pacing decisions in digital news distribution."}, 
+    {"title": "Trimming Precision: Sub-Frame & Match Edits", "standard": "CTB.01.03", "bullets": ["Utilize sub-frame audio editing to eliminate micro-gaps in fast dialogue chops.", "Perform match cuts connecting similar shapes or motions between consecutive clips.", "Audit sequence frame count to guarantee exact 15:00 social media export length."], "callout": "Sub-frame precision prevents audio pops and preserves seamless continuity during high-frequency edits."}, 
+    {"title": "Export Presets for Social Distribution", "standard": "CTB.01.03", "bullets": ["Select H.264/MP4 container formats with target bitrates optimized for mobile web delivery.", "Verify stereo audio encoding at 320 kbps / 48 kHz standard AAC bitrate.", "Incorporate strict color profile metadata tagging (sRGB / Rec.709) for consistent mobile display."], "callout": "Correct render settings preserve visual punch and prevent platform compression artifacts."}, 
+    {"title": "Pacing Peer Audit & Critique", "standard": "CTB.12.03", "bullets": ["Analyze peer 15-second teasers for shot density, cut rhythm, and hook effectiveness.", "Identify moments of visual lagging or audio misalignment that disrupt pace.", "Iterate cuts to maximize emotional impact and viewer retention."], "callout": "Objective peer evaluation pinpoints exact frames where visual pacing lags or loses momentum."}
+  ], 
+  "resources": ["Shorter Attention Spans Enable Quick Attention Markets"], 
+  "form": [
+    {
+      "id": 1, 
+      "type": "multiple_choice", 
+      "question": "What effect does reducing average shot length (ASL) have on video pacing?", 
+      "options": ["Slows down narrative momentum", "Increases perceived speed and urgency", "Eliminates need for audio mixing", "Lowers render frame rates"], 
+      "correct_answer": "Increases perceived speed and urgency"
+    }, 
+    {
+      "id": 2, 
+      "type": "multiple_choice", 
+      "question": "Which editing technique hides a transition point by cutting during subject movement?", 
+      "options": ["Cutting on action", "Jump cutting", "Match fade", "Freeze frame"], 
+      "correct_answer": "Cutting on action"
+    }, 
+    {
+      "id": 3, 
+      "type": "multiple_choice", 
+      "question": "What is the standard target duration for a high-energy social media teaser promo?", 
+      "options": ["5 seconds", "15 seconds", "60 seconds", "3 minutes"], 
+      "correct_answer": "15 seconds"
+    }, 
+    {
+      "id": 4, 
+      "type": "fill_in_blank", 
+      "question": "The editing principle that connects similar shapes or motions between two consecutive clips is called a ________ cut.", 
+      "correct_answer": "match"
+    }, 
+    {
+      "id": 5, 
+      "type": "short_answer", 
+      "question": "Why is dynamic kinetic typography essential for mobile social media news teasers?", 
+      "correct_answer": "It captures attention and communicates key news facts for mobile users viewing video with audio muted."
+    }, 
+    {
+      "id": 6, 
+      "type": "true_false", 
+      "question": "Traditional broadcast television packages use faster pacing and shorter shot durations than social media teasers.", 
+      "correct_answer": "False"
+    }, 
+    {
+      "id": 7, 
+      "type": "true_false", 
+      "question": "Setting timeline markers on audio musical beats helps editors synchronize visual cut points to music rhythm.", 
+      "correct_answer": "True"
+    }, 
+    {
+      "id": 8, 
+      "type": "multiple_choice", 
+      "question": "Which aspect ratio is standard for vertical mobile social media video platforms?", 
+      "options": ["16:9", "4:3", "9:16", "21:9"], 
+      "correct_answer": "9:16"
+    }, 
+    {
+      "id": 9, 
+      "type": "short_answer", 
+      "question": "Describe the three-part structural breakdown of an effective 15-second news promo teaser.", 
+      "correct_answer": "Hook (0-2s), Core Message (3-11s), Call to Action/Branding (12-15s)."
+    }, 
+    {
+      "id": 10, 
+      "type": "reflection", 
+      "question": "Explain how the research resource 'Shorter Attention Spans Enable Quick Attention Markets' justifies rapid news editing for modern audiences.", 
+      "correct_answer": "Demonstrates rapid viewer drop-off, necessitating immediate visual hooks."
+    }, 
+    {
+      "id": 11, 
+      "type": "rating_scale", 
+      "question": "Self-Evaluation: Rate your current editing proficiency in synchronizing visual cuts to music beats.", 
+      "options": ["1 - Need Help", "2 - Developing", "3 - Proficient", "4 - Advanced / Mastered"]
+    }
+  ]
+}));
 </script>
 </body>
 </html>
